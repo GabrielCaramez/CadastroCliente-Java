@@ -15,7 +15,8 @@ public class Main {
             System.out.println("1. Adicionar Cliente");
             System.out.println("2. Listar Clientes");
             System.out.println("3. Remover Cliente");
-            System.out.println("4. Sair");
+            System.out.println("4. Adicionar veículo a cliente");
+            System.out.println("5. Sair");
             System.out.print("Escolha uma opção: ");
             
             opcao = scanner.nextInt();
@@ -32,8 +33,11 @@ public class Main {
                     removerCliente(scanner);
                     break;
                 case 4:
-                    System.out.println("Saindo...");
+                    adicionarVeiculoACliente(scanner);
                     break;
+                case 5:
+                	System.out.println("Saindo...");
+                	break;
                 default:
                     System.out.println("Opção inválida!");
             }
@@ -83,5 +87,33 @@ public class Main {
             System.out.println("Cliente não encontrado.");
         }
     }
+    
+    private static void adicionarVeiculoACliente(Scanner scanner) {
+    	System.out.print("Digite o nome do cliente: ");
+    	String nomeCliente = scanner.nextLine();
+    	
+    	Cliente cliente = null;
+    	for (Cliente c : clientes) {
+    		if(c.getNome().equalsIgnoreCase(nomeCliente)) {
+    			cliente = c;
+    			break;
+    		}
+    	}
+    	
+    	if (cliente != null) {
+    		System.out.print("Marca do veículo: ");
+    		String marca = scanner.nextLine();
+    		System.out.print("Modelo do veículo: ");
+    		String modelo = scanner.nextLine();
+    		System.out.print("Placa do veículo: ");
+    		String placa = scanner.nextLine();
+    		
+    		Veiculo veiculo = new Veiculo(marca, modelo, placa);
+    		cliente.adicionarVeiculo(veiculo);
+    		System.out.println("Veículo adicionado com sucesso!");
+    		
+    	}else {
+    		System.out.println("Cliente não encontrado. ");
+    	}
+    }
 }
-
