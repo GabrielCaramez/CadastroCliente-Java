@@ -10,13 +10,15 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         int opcao = 0;
 
-        while (opcao != 5) {
+        while (opcao != 7) {
             System.out.println("\n=== Menu ===");
             System.out.println("1. Adicionar Cliente");
             System.out.println("2. Listar Clientes");
             System.out.println("3. Remover Cliente");
             System.out.println("4. Adicionar veículo a cliente");
-            System.out.println("5. Sair");
+            System.out.println("5. Agendar Vistoria");
+            System.out.println("6. Listar Agendamentos de Cliente");
+            System.out.println("7. Sair");
             System.out.print("Escolha uma opção: ");
             
             opcao = scanner.nextInt();
@@ -36,8 +38,13 @@ public class Main {
                     adicionarVeiculoACliente(scanner);
                     break;
                 case 5:
-                	System.out.println("Saindo...");
+                	agendarVistoria(scanner);
                 	break;
+                case 6:
+                	listarAgendamentosDeCLiente(scanner);
+                	break;
+                case 7:
+                	System.out.println("Saindo...");
                 default:
                     System.out.println("Opção inválida!");
             }
@@ -114,6 +121,60 @@ public class Main {
     		
     	}else {
     		System.out.println("Cliente não encontrado. ");
+    	}
+    }
+    
+    private static void agendarVistoria(Scanner scanner) {
+    	System.out.print("Digite o nome do cliente: ");
+    	String nomeCliente = scanner.nextLine();
+    	
+    	Cliente cliente = null;
+    	for (Cliente c : clientes) {
+    		if (c.getNome().equalsIgnoreCase(nomeCliente)) {
+    			cliente = c;
+    			break;
+    		}
+    	}
+    	
+    	if (cliente != null) {
+    		System.out.print("Data da vistoria(YYYY-MM-DD: ");
+    		String data = scanner.nextLine();
+    		System.out.print("Hora da vistoria (HH:MM): ");
+    		String hora = scanner.nextLine();
+    		System.out.print("Status da vistoria: ");
+    		String status = scanner.nextLine();
+    		
+    		Agendamento agendamento = new Agendamento(nomeCliente, data, hora, status);
+    		cliente.adicionarAgendamento(agendamento);
+    		System.out.println("Vistoria agendada com sucesso!");
+    	}else {
+    		System.out.println("Cliente não encontrado. ");
+    	}
+    }
+    
+    private static void listarAgendamentosDeCLiente(Scanner scanner) {
+    	System.out.print("Digite o nome do cliente: ");
+    	String nomeCliente = scanner.nextLine();
+    	
+    	Cliente cliente = null;
+    	for (Cliente c : clientes) {
+    		if (c.getNome().equalsIgnoreCase(nomeCliente)) {
+    			cliente = c;
+    			break;
+    		}
+    	}
+    	
+    	if (cliente != null) {
+    		ArrayList<Agendamento> agendamentos = cliente.getAgendamentos();
+    		if (agendamentos.isEmpty()) {
+    			System.out.println("Nenhum agendamento encontrado para este cliente. ");
+    		}else {
+    			for(Agendamento agendamento : agendamentos) {
+    				System.out.println(agendamento);
+    			}
+    		}
+    	}else {
+    		System.out.println("Cliente não encontrado.");
     	}
     }
 }
