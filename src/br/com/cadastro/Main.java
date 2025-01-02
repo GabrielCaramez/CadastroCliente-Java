@@ -1,290 +1,325 @@
-package br.com.cadastro;
+    package br.com.cadastro;
 
-import java.util.ArrayList;
-import java.util.Scanner;
+    import javax.swing.*;
+    import java.awt.*;
+    import java.awt.event.*;
+    import java.util.ArrayList;
 
-public class Main {
-    private static ArrayList<Cliente> clientes = new ArrayList<>();
+    public class Main {
+        private static ArrayList<Cliente> clientes = new ArrayList<>();
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        int opcao = 0;
+        public static void main(String[] args) {
+            SwingUtilities.invokeLater(Main::createAndShowGUI);
+        }
 
-        while (opcao != 9) {
-            System.out.println("\n=== Menu ===");
-            System.out.println("1. Adicionar Cliente");
-            System.out.println("2. Listar Clientes");
-            System.out.println("3. Remover Cliente");
-            System.out.println("4. Adicionar veículo a cliente");
-            System.out.println("5. Agendar Vistoria");
-            System.out.println("6. Listar Agendamentos de Cliente");
-            System.out.println("7. Adicionar Item ao Checklist de Vistoria");
-            System.out.println("8. Mostrar Checklist de Vistoria");
-            System.out.println("9. Sair");
-            System.out.print("Escolha uma opção: ");
-            opcao = scanner.nextInt();
-            scanner.nextLine(); // Consumir o "enter" após o nextInt
+        private static void createAndShowGUI() {
+            JFrame frame = new JFrame("Sistema de Cadastro");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(600, 400);
 
+            JPanel panel = new JPanel();
+            panel.setLayout(new GridLayout(9, 1));
 
-            switch (opcao) {
-                case 1:
-                    adicionarCliente(scanner);
-                    break;
-                case 2:
-                    listarClientes();
-                    break;
-                case 3:
-                    removerCliente(scanner);
-                    break;
-                case 4:
-                    adicionarVeiculoACliente(scanner);
-                    break;
-                case 5:
-                    agendarVistoria(scanner);
-                    break;
-                case 6:
-                    listarAgendamentosDeCliente(scanner);
-                    break;
-                case 7:
-                    adicionarItemChecklist(scanner);
-                    break;
-                case 8:
-                    mostrarChecklist(scanner);
-                    break;
-                case 9:
-                    System.out.println("Saindo...");
-                    break;
+            JButton btnAdicionarCliente = new JButton("Adicionar Cliente");
+            JButton btnListarClientes = new JButton("Listar Clientes");
+            JButton btnRemoverCliente = new JButton("Remover Cliente");
+            JButton btnAdicionarVeiculo = new JButton("Adicionar Veículo a Cliente");
+            JButton btnAgendarVistoria = new JButton("Agendar Vistoria");
+            JButton btnListarAgendamentos = new JButton("Listar Agendamentos de Cliente");
+            JButton btnAdicionarItemChecklist = new JButton("Adicionar Item ao Checklist");
+            JButton btnMostrarChecklist = new JButton("Mostrar Checklist");
+            JButton btnSair = new JButton("Sair");
 
-                default:
-                    System.out.println("Opção inválida!");
+            panel.add(btnAdicionarCliente);
+            panel.add(btnListarClientes);
+            panel.add(btnRemoverCliente);
+            panel.add(btnAdicionarVeiculo);
+            panel.add(btnAgendarVistoria);
+            panel.add(btnListarAgendamentos);
+            panel.add(btnAdicionarItemChecklist);
+            panel.add(btnMostrarChecklist);
+            panel.add(btnSair);
+
+            frame.add(panel);
+
+            // Actions
+            btnAdicionarCliente.addActionListener(e -> adicionarCliente());
+            btnListarClientes.addActionListener(e -> listarClientes());
+            btnRemoverCliente.addActionListener(e -> removerCliente());
+            btnAdicionarVeiculo.addActionListener(e -> adicionarVeiculo());
+            btnAgendarVistoria.addActionListener(e -> agendarVistoria());
+            btnListarAgendamentos.addActionListener(e -> listarAgendamentos());
+            btnAdicionarItemChecklist.addActionListener(e -> adicionarItemChecklist());
+            btnMostrarChecklist.addActionListener(e -> mostrarChecklist());
+            btnSair.addActionListener(e -> System.exit(0));
+
+            frame.setVisible(true);
+        }
+
+        private static void adicionarCliente() {
+            JTextField nomeField = new JTextField();
+            JTextField emailField = new JTextField();
+            JTextField telefoneField = new JTextField();
+
+            Object[] message = {
+                "Nome:", nomeField,
+                "Email:", emailField,
+                "Telefone:", telefoneField
+            };
+
+            int option = JOptionPane.showConfirmDialog(null, message, "Adicionar Cliente", JOptionPane.OK_CANCEL_OPTION);
+            if (option == JOptionPane.OK_OPTION) {
+                String nome = nomeField.getText();
+                String email = emailField.getText();
+                String telefone = telefoneField.getText();
+
+                Cliente cliente = new Cliente(nome, email, telefone);
+                clientes.add(cliente);
+
+                JOptionPane.showMessageDialog(null, "Cliente adicionado com sucesso!");
             }
         }
-        scanner.close();
-    }
 
-    private static void listarClientes() {
-        if (clientes.isEmpty()) {
-            System.out.println("Nenhum cliente cadastrado.");
-        } else {
-            System.out.println("\n=== Lista de Clientes ===");
+        private static void listarClientes() {
+            if (clientes.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Nenhum cliente cadastrado.");
+                return;
+            }
+
+            StringBuilder sb = new StringBuilder("=== Lista de Clientes ===\n");
             for (Cliente cliente : clientes) {
-                System.out.println(cliente);
+                sb.append(cliente).append("\n");
             }
+            JOptionPane.showMessageDialog(null, sb.toString());
         }
-    }
 
-    private static void adicionarCliente(Scanner scanner) {
-        System.out.print("Nome: ");
-        String nome = scanner.nextLine();
-        System.out.print("Email: ");
-        String email = scanner.nextLine();
-        System.out.print("Telefone: ");
-        String telefone = scanner.nextLine();
+        private static void removerCliente() {
+            String nome = JOptionPane.showInputDialog("Digite o nome do cliente a ser removido:");
 
-        Cliente cliente = new Cliente(nome, email, telefone);
-        clientes.add(cliente);
-        System.out.println("Cliente adicionado com sucesso!");
-    }
-
-    private static void removerCliente(Scanner scanner) {
-        System.out.print("Digite o nome do cliente a ser removido: ");
-        String nome = scanner.nextLine();
-
-        Cliente clienteARemover = null;
-        for (Cliente cliente : clientes) {
-            if (cliente.getNome().equalsIgnoreCase(nome)) {
-                clienteARemover = cliente;
-                break;
+            if (nome == null || nome.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Nome não pode ser vazio.");
+                return;
             }
-        }
-        if (clienteARemover != null) {
-            clientes.remove(clienteARemover);
-            System.out.println("Cliente removido com sucesso!");
-        } else {
-            System.out.println("Cliente não encontrado.");
-        }
-    }
 
-    private static void adicionarVeiculoACliente(Scanner scanner) {
-        System.out.print("Digite o nome do cliente: ");
-        String nomeCliente = scanner.nextLine();
-
-        Cliente cliente = null;
-        for (Cliente c : clientes) {
-            if (c.getNome().equalsIgnoreCase(nomeCliente)) {
-                cliente = c;
-                break;
-            }
-        }
-
-        if (cliente != null) {
-            System.out.print("Marca do veículo: ");
-            String marca = scanner.nextLine();
-            System.out.print("Modelo do veículo: ");
-            String modelo = scanner.nextLine();
-            System.out.print("Placa do veículo: ");
-            String placa = scanner.nextLine();
-
-            Veiculo veiculo = new Veiculo(marca, modelo, placa);
-            cliente.adicionarVeiculo(veiculo);
-            System.out.println("Veículo adicionado com sucesso!");
-        } else {
-            System.out.println("Cliente não encontrado.");
-        }
-    }
-
-    private static void agendarVistoria(Scanner scanner) {
-        System.out.print("Digite o nome do cliente: ");
-        String nomeCliente = scanner.nextLine();
-
-        Cliente cliente = null;
-        for (Cliente c : clientes) {
-            if (c.getNome().equalsIgnoreCase(nomeCliente)) {
-                cliente = c;
-                break;
-            }
-        }
-
-        if (cliente != null) {
-            System.out.print("Data da vistoria (YYYY-MM-DD): ");
-            String data = scanner.nextLine();
-            System.out.print("Hora da vistoria (HH:MM): ");
-            String hora = scanner.nextLine();
-            System.out.print("Status da vistoria: ");
-            String status = scanner.nextLine();
-            System.out.print("Placa do veículo: ");
-            String placaVeiculo = scanner.nextLine();
-            System.out.print("Marca do veículo: ");
-            String marcaVeiculo = scanner.nextLine();
-            System.out.print("Modelo do veículo: ");
-            String modeloVeiculo = scanner.nextLine();
-            System.out.print("Ano do veículo: ");
-            int anoVeiculo = scanner.nextInt();
-            System.out.print("Chassi do veículo: ");
-            scanner.nextLine(); // Consumir o enter
-            String chassiVeiculo = scanner.nextLine();
-            System.out.print("KM do veículo: ");
-            int kmVeiculo = scanner.nextInt();
-
-            Agendamento agendamento = new Agendamento(nomeCliente, data, hora, status, placaVeiculo, marcaVeiculo, modeloVeiculo, anoVeiculo, chassiVeiculo, kmVeiculo);
-            cliente.adicionarAgendamento(agendamento);
-            System.out.println("Vistoria agendada com sucesso!");
-        } else {
-            System.out.println("Cliente não encontrado.");
-        }
-    }
-
-    private static void listarAgendamentosDeCliente(Scanner scanner) {
-        System.out.print("Digite o nome do cliente: ");
-        String nomeCliente = scanner.nextLine();
-
-        Cliente cliente = null;
-        for (Cliente c : clientes) {
-            if (c.getNome().equalsIgnoreCase(nomeCliente)) {
-                cliente = c;
-                break;
-            }
-        }
-
-        if (cliente != null) {
-            ArrayList<Agendamento> agendamentos = cliente.getAgendamentos();
-            if (agendamentos.isEmpty()) {
-                System.out.println("Nenhum agendamento encontrado para este cliente.");
-            } else {
-                for (Agendamento agendamento : agendamentos) {
-                    System.out.println(agendamento);
-                }
-            }
-        } else {
-            System.out.println("Cliente não encontrado.");
-        }
-    }
-
-    private static void adicionarItemChecklist(Scanner scanner) {
-        System.out.print("Digite o nome do cliente: ");
-        String nomeCliente = scanner.nextLine();
-
-        Cliente cliente = null;
-        for (Cliente c : clientes) {
-            if (c.getNome().equalsIgnoreCase(nomeCliente)) {
-                cliente = c;
-                break;
-            }
-        }
-
-        if (cliente != null) {
-            System.out.print("Digite a data da vistoria (YYYY-MM-DD): ");
-            String dataVistoria = scanner.nextLine();
-            System.out.print("Digite a hora da vistoria (HH:MM): ");
-            String horaVistoria = scanner.nextLine();
-            System.out.print("Digite a placa do veículo: ");
-            String placaVeiculo = scanner.nextLine();
-
-            Agendamento agendamento = null;
-            for (Agendamento a : cliente.getAgendamentos()) {
-                if (a.getDataVistoria().equals(dataVistoria) && a.getHoraVistoria().equals(horaVistoria) && a.getPlacaVeiculo().equals(placaVeiculo)) {
-                    agendamento = a;
+            Cliente clienteARemover = null;
+            for (Cliente cliente : clientes) {
+                if (cliente.getNome().equalsIgnoreCase(nome)) {
+                    clienteARemover = cliente;
                     break;
                 }
             }
 
-            if (agendamento != null) {
-                System.out.print("Digite a descrição do item do checklist: ");
-                String descricao = scanner.nextLine();
-                ChecklistItem item = new ChecklistItem(descricao);
-                agendamento.adicionarChecklistItem(item);
-                System.out.println("Item adicionado ao checklist com sucesso!");
+            if (clienteARemover != null) {
+                clientes.remove(clienteARemover);
+                JOptionPane.showMessageDialog(null, "Cliente removido com sucesso!");
             } else {
-                System.out.println("Agendamento não encontrado.");
-            }
-        } else {
-            System.out.println("Cliente não encontrado.");
-        }
-    }
-    private static void mostrarChecklist(Scanner scanner) {
-        System.out.print("Digite o nome do cliente: ");
-        String nomeCliente = scanner.nextLine();
-
-        Cliente cliente = null;
-        for (Cliente c : clientes) {
-            if (c.getNome().equalsIgnoreCase(nomeCliente)) {
-                cliente = c;
-                break;
+                JOptionPane.showMessageDialog(null, "Cliente não encontrado.");
             }
         }
 
-        if (cliente != null) {
-            System.out.print("Digite a data da vistoria (YYYY-MM-DD): ");
-            String dataVistoria = scanner.nextLine();
-            System.out.print("Digite a hora da vistoria (HH:MM): ");
-            String horaVistoria = scanner.nextLine();
-            System.out.print("Digite a placa do veículo: ");
-            String placaVeiculo = scanner.nextLine();
+        private static void adicionarVeiculo() {
+            String nomeCliente = JOptionPane.showInputDialog("Digite o nome do cliente:");
 
-            Agendamento agendamento = null;
-            for (Agendamento a : cliente.getAgendamentos()) {
-                if (a.getDataVistoria().equals(dataVistoria) && a.getHoraVistoria().equals(horaVistoria) && a.getPlacaVeiculo().equals(placaVeiculo)) {
-                    agendamento = a;
+            Cliente cliente = null;
+            for (Cliente c : clientes) {
+                if (c.getNome().equalsIgnoreCase(nomeCliente)) {
+                    cliente = c;
                     break;
                 }
             }
 
-            if (agendamento != null) {
-                ArrayList<ChecklistItem> checklist = agendamento.getChecklist();
-                if (checklist.isEmpty()) {
-                    System.out.println("Nenhum item no checklist para este agendamento.");
+            if (cliente != null) {
+                JTextField marcaField = new JTextField();
+                JTextField modeloField = new JTextField();
+                JTextField placaField = new JTextField();
+
+                Object[] message = {
+                    "Marca do veículo:", marcaField,
+                    "Modelo do veículo:", modeloField,
+                    "Placa do veículo:", placaField
+                };
+
+                int option = JOptionPane.showConfirmDialog(null, message, "Adicionar Veículo", JOptionPane.OK_CANCEL_OPTION);
+                if (option == JOptionPane.OK_OPTION) {
+                    String marca = marcaField.getText();
+                    String modelo = modeloField.getText();
+                    String placa = placaField.getText();
+
+                    Veiculo veiculo = new Veiculo(marca, modelo, placa);
+                    cliente.adicionarVeiculo(veiculo);
+
+                    JOptionPane.showMessageDialog(null, "Veículo adicionado com sucesso!");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Cliente não encontrado.");
+            }
+        }
+
+        private static void agendarVistoria() {
+            String nomeCliente = JOptionPane.showInputDialog("Digite o nome do cliente:");
+
+            Cliente cliente = null;
+            for (Cliente c : clientes) {
+                if (c.getNome().equalsIgnoreCase(nomeCliente)) {
+                    cliente = c;
+                    break;
+                }
+            }
+
+            if (cliente != null) {
+                JTextField dataField = new JTextField();
+                JTextField horaField = new JTextField();
+                JTextField statusField = new JTextField();
+                JTextField placaField = new JTextField();
+                JTextField marcaField = new JTextField();
+                JTextField modeloField = new JTextField();
+                JTextField anoField = new JTextField();
+                JTextField chassiField = new JTextField();
+                JTextField kmField = new JTextField();
+
+                Object[] message = {
+                    "Data (YYYY-MM-DD):", dataField,
+                    "Hora (HH:MM):", horaField,
+                    "Status:", statusField,
+                    "Placa do veículo:", placaField,
+                    "Marca do veículo:", marcaField,
+                    "Modelo do veículo:", modeloField,
+                    "Ano do veículo:", anoField,
+                    "Chassi do veículo:", chassiField,
+                    "KM do veículo:", kmField
+                };
+
+                int option = JOptionPane.showConfirmDialog(null, message, "Agendar Vistoria", JOptionPane.OK_CANCEL_OPTION);
+                if (option == JOptionPane.OK_OPTION) {
+                    String data = dataField.getText();
+                    String hora = horaField.getText();
+                    String status = statusField.getText();
+                    String placa = placaField.getText();
+                    String marca = marcaField.getText();
+                    String modelo = modeloField.getText();
+                    int ano = Integer.parseInt(anoField.getText());
+                    String chassi = chassiField.getText();
+                    int km = Integer.parseInt(kmField.getText());
+
+                    Agendamento agendamento = new Agendamento(nomeCliente, data, hora, status, placa, marca, modelo, ano, chassi, km);
+                    cliente.adicionarAgendamento(agendamento);
+
+                    JOptionPane.showMessageDialog(null, "Vistoria agendada com sucesso!");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Cliente não encontrado.");
+            }
+        }
+
+        private static void listarAgendamentos() {
+            String nomeCliente = JOptionPane.showInputDialog("Digite o nome do cliente:");
+
+            Cliente cliente = null;
+            for (Cliente c : clientes) {
+                if (c.getNome().equalsIgnoreCase(nomeCliente)) {
+                    cliente = c;
+                    break;
+                }
+            }
+
+            if (cliente != null) {
+                ArrayList<Agendamento> agendamentos = cliente.getAgendamentos();
+                if (agendamentos.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Nenhum agendamento encontrado para este cliente.");
                 } else {
-                    System.out.println("\n=== Checklist ===");
-                    for (ChecklistItem item : checklist) {
-                        System.out.println("- " + item.getDescricao());
+                    StringBuilder sb = new StringBuilder("=== Agendamentos ===\n");
+                    for (Agendamento agendamento : agendamentos) {
+                        sb.append(agendamento).append("\n");
+                    }
+                    JOptionPane.showMessageDialog(null, sb.toString());
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Cliente não encontrado.");
+            }
+        }
+
+        private static void adicionarItemChecklist() {
+            String nomeCliente = JOptionPane.showInputDialog("Digite o nome do cliente:");
+
+            Cliente cliente = null;
+            for (Cliente c : clientes) {
+                if (c.getNome().equalsIgnoreCase(nomeCliente)) {
+                    cliente = c;
+                    break;
+                }
+            }
+
+            if (cliente != null) {
+                String dataVistoria = JOptionPane.showInputDialog("Digite a data da vistoria (YYYY-MM-DD):");
+                String horaVistoria = JOptionPane.showInputDialog("Digite a hora da vistoria (HH:MM):");
+                String placaVeiculo = JOptionPane.showInputDialog("Digite a placa do veículo:");
+
+                Agendamento agendamento = null;
+                for (Agendamento a : cliente.getAgendamentos()) {
+                    if (a.getDataVistoria().equals(dataVistoria) &&
+                        a.getHoraVistoria().equals(horaVistoria) &&
+                        a.getPlacaVeiculo().equals(placaVeiculo)) {
+                        agendamento = a;
+                        break;
                     }
                 }
+
+                if (agendamento != null) {
+                    String descricao = JOptionPane.showInputDialog("Digite a descrição do item do checklist:");
+                    ChecklistItem item = new ChecklistItem(descricao);
+                    agendamento.adicionarChecklistItem(item);
+                    JOptionPane.showMessageDialog(null, "Item adicionado ao checklist com sucesso!");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Agendamento não encontrado.");
+                }
             } else {
-                System.out.println("Agendamento não encontrado.");
+                JOptionPane.showMessageDialog(null, "Cliente não encontrado.");
             }
-        } else {
-            System.out.println("Cliente não encontrado.");
+        }
+
+        private static void mostrarChecklist() {
+            String nomeCliente = JOptionPane.showInputDialog("Digite o nome do cliente:");
+
+            Cliente cliente = null;
+            for (Cliente c : clientes) {
+                if (c.getNome().equalsIgnoreCase(nomeCliente)) {
+                    cliente = c;
+                    break;
+                }
+            }
+
+            if (cliente != null) {
+                String dataVistoria = JOptionPane.showInputDialog("Digite a data da vistoria (YYYY-MM-DD):");
+                String horaVistoria = JOptionPane.showInputDialog("Digite a hora da vistoria (HH:MM):");
+                String placaVeiculo = JOptionPane.showInputDialog("Digite a placa do veículo:");
+
+                Agendamento agendamento = null;
+                for (Agendamento a : cliente.getAgendamentos()) {
+                    if (a.getDataVistoria().equals(dataVistoria) &&
+                        a.getHoraVistoria().equals(horaVistoria) &&
+                        a.getPlacaVeiculo().equals(placaVeiculo)) {
+                        agendamento = a;
+                        break;
+                    }
+                }
+
+                if (agendamento != null) {
+                    ArrayList<ChecklistItem> checklist = agendamento.getChecklist();
+                    if (checklist.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Nenhum item no checklist para este agendamento.");
+                    } else {
+                        StringBuilder sb = new StringBuilder("=== Checklist ===\n");
+                        for (ChecklistItem item : checklist) {
+                            sb.append("- ").append(item.getDescricao()).append("\n");
+                        }
+                        JOptionPane.showMessageDialog(null, sb.toString());
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Agendamento não encontrado.");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Cliente não encontrado.");
+            }
         }
     }
 
-}
